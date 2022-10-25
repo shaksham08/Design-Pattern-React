@@ -75,3 +75,107 @@ export default SocketService;
 ```
 
 - So in singleton we force class or a service to be created only one instance, now we need not to worry about its multiple instance creation.
+
+
+## 2. Proxy Design pattern
+
+- here we are updating id of someting on state change which is not good 
+
+```js
+import "./styles.css";
+import SocketService from "./socket"
+import React, {useState} from "react"
+
+const person = {
+  name : "shaksham", 
+  age : 23,
+  balance : 100 , 
+  id : 1
+}
+
+export default function App() {
+
+  const [state,setState] = useState(1);
+
+  const socket = new SocketService();
+  return (
+    <div className="App">
+      <h1>{person.name}</h1>
+      <button onClick={()=>setState(data=>data +1)}>{state}</button>
+      <h1>Hello CodeSandbox </h1>
+      <h2>{person.id}</h2>
+      <button onClick={()=>{
+        person.id =2;
+        setState(data=>data +1);
+      }}> change</button>
+    </div>
+  );
+}
+
+```
+
+
+- Here we can create a proxy pattern to stop user from changing id but user can change the name and other details 
+- Here we create a middle ware and block the direct access to the object from the user.
+- All the crud operation should happen though this proxy.
+
+
+```js
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+let isAdmin = TextTrackCue;
+
+const person = {
+  id: 1,
+  name: "Shaksham",
+  age: 23,
+  balance: 100,
+};
+
+const personProxy = new Proxy(person, {
+  set: (obj, prop, value) => {
+    if (prop == "name") {
+      obj[prop] = value;
+    } else {
+      throw new Error("You can only change name property");
+    }
+  },
+  get: (obj, prop) => {
+    if (prop == "balance") {
+      if (isAdmin) return obj[prop];
+      return null;
+    }
+    return obj[prop];
+  },
+});
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>{personProxy.id}</h1>
+        <h1>{personProxy.name}</h1>
+        <h1>{personProxy.balance}</h1>
+        <button
+          onClick={(e) => {
+            personProxy.id = 2;
+            setState((s) => s + 1);
+          }}
+        >
+          Change
+        </button>
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.jsx</code> and save to reload!
+        </p>
+        <span className="App-link">Hello from codedamn :)</span>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+```
