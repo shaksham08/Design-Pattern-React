@@ -179,3 +179,57 @@ function App() {
 export default App;
 
 ```
+
+
+## 3. Factory design pattern
+
+- Factory means which produces something
+
+
+```js
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+const userFactory = ({ fname, lname, age }) => ({
+  firstName: fname,
+  lastName: lname,
+  age,
+  fullName() {
+    return `${fname} ${lname}`;
+  },
+  isEligibleToVote() {
+    return `${age >= 18}`;
+  },
+});
+
+const johnMartin = userFactory({ fname: "John", lname: "Martin", age: 22 });
+
+const shaksham = userFactory({ fname: "Shaksham", lname: "sinha", age: 23 });
+
+const johnDoe = userFactory({ fname: "Jhon", lname: "Doe", age: 30 });
+
+const users = [johnMartin, shaksham, johnDoe];
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.jsx</code> and save to reload!
+        </p>
+
+        {users.map((user) => (
+          <li>
+            {user.fullName()} - Can they vote {user.isEligibleToVote()}
+          </li>
+        ))}
+        <span className="App-link">Hello from codedamn :)</span>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
