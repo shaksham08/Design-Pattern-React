@@ -233,3 +233,150 @@ function App() {
 
 export default App;
 ```
+
+
+## 4. Observable design pattern
+
+
+- Here in observable design pattern there are two things -> observer and observable 
+- we can subscribe to a youtube channel -> so anytime a video is pushed the subscriber gets the notifications 
+- there are certain things we want to monitor, in react useState is a great example of observable desing patter
+
+- below is app.js file 
+
+```js
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { store } from "./store";
+import { useStore } from "./useStore";
+
+const Text = () => {
+  const count = useStore(-1);
+
+  return <h1>{count}</h1>;
+};
+
+const Text2 = () => {
+  const count = useStore(-1);
+
+  return <p>{count}</p>;
+};
+
+function App() {
+  return (
+    <div className="App">
+      <button onClick={(e) => store.increment()}>Increment the count</button>
+      <header className="App-header">
+        <Text />
+        <Text2 />
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.jsx</code> and save to reload!
+        </p>
+
+        <span className="App-link">Hello from codedamn :)</span>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+
+- below is store.js
+
+```js
+class Store {
+  count = 1;
+  subscribers = [];
+
+  changeCount(newValue) {
+    this.count = newValue;
+    this.subscribers.forEach((e) => e(newValue));
+  }
+
+  increment() {
+    this.changeCount(this.count + 1);
+  }
+
+  subscribe(callbackFn) {
+    this.subscribers.push(callbackFn);
+  }
+}
+
+export const store = new Store();
+```
+
+
+- below is useStore.jsx
+
+```js
+import React, { useState, useEffect } from "react";
+import { store } from "./store";
+
+export const useStore = (v) => {
+  const [value, setValue] = useState(v);
+
+  useEffect(() => {
+    store.subscribe(setValue);
+  }, []);
+
+  return value;
+};
+
+```
+
+## 5. Mixin Design pattern
+ 
+```js
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+const animalFun = {
+  walk: () => <p>Walking...</p>,
+  sleep: () => <p>Sleeping..</p>,
+};
+
+const dogFn = {
+  bark: () => <p>Barking...</p>,
+};
+
+class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+class Lion {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+Object.assign(dogFn, animalFun);
+Object.assign(Dog.prototype, dogFn);
+Object.assign(Lion.prototype, animalFun);
+
+const tuffy = new Dog("Tuffy");
+
+function App() {
+  return (
+    <div className="App">
+      {tuffy.bark()}
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.jsx</code> and save to reload!
+        </p>
+        <span className="App-link">Hello from codedamn :)</span>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
